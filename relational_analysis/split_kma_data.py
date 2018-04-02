@@ -4,6 +4,8 @@ from urllib2 import Request, urlopen, URLError, HTTPError
 import requests
 import ssl
 import json,ast,re
+import api_keys
+
 
 # max_ta, min_ta, (최고, 최저 기온)
 # hr1_max_icsr_hrmt (1시간 최다 일사량)
@@ -11,8 +13,10 @@ import json,ast,re
 # avg_ts (평균 지면온도)
 # avg_m1_0_te (1.0m 지중온도)
 
+
 l_weather_params = ['MAX_TA', 'MIN_TA', 'HR1_MAX_ICSR_HRMT', 'AVG_PA', 'AVG_TS', 'AVG_M1_0_TE']
-url_kma ="http://data.kma.go.kr/apiData/getData?type=json&dataCd=ASOS&dateCd=DAY&startDt=20180301&endDt=20180301&stnIds=108&schListCnt=1&pageIndex=1&apiKey=키 발급!!!"
+url_kma ="http://data.kma.go.kr/apiData/getData?type=json&dataCd=ASOS&dateCd=DAY&startDt=20180301&endDt=20180301&stnIds=108&schListCnt=1&pageIndex=1&apiKey={}".format(api_keys.ApiKeys('kma').get_api_key())
+
 
 context = ssl._create_unverified_context()
 print type(context)
@@ -45,12 +49,9 @@ def get_response():
 kma_data = get_response()
 dict_kma_info_data = get_info_dict(kma_data)
 
-l_weather_MAX_TA = [l_weather['MAX_TA'] for l_weather in dict_kma_info_data['info']]
-# print "======================================="
-# print l_weather_MAX_TA
-# print l_weather_MAX_TA[0]
-# print "======================================="
+
 print "======================================="
+print "데이터 출력 "
 dict_weather_data = {}
 for param in l_weather_params:
     data = [l_weather[param] for l_weather in dict_kma_info_data['info']][0]
@@ -58,6 +59,7 @@ for param in l_weather_params:
     dict_weather_data[param] = data
 
 print "======================================="
+print "dictonary 데이터 출력"
 for key, value in dict_weather_data.iteritems():
     print "(key,value) = ({},{})".format(key, value)
 
