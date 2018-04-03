@@ -1,12 +1,9 @@
 #-*- coding:utf-8 -*-
 import urllib2, urllib
 from urllib2 import Request, urlopen, URLError, HTTPError
-import requests
 import ssl
-import json,ast,re
+import json
 import api_keys
-
-
 # max_ta, min_ta, (최고, 최저 기온)
 # hr1_max_icsr_hrmt (1시간 최다 일사량)
 # avg_pa (평균 현지기압)
@@ -15,8 +12,24 @@ import api_keys
 
 
 l_weather_params = ['MAX_TA', 'MIN_TA', 'HR1_MAX_ICSR_HRMT', 'AVG_PA', 'AVG_TS', 'AVG_M1_0_TE']
-url_kma ="http://data.kma.go.kr/apiData/getData?type=json&dataCd=ASOS&dateCd=DAY&startDt=20180301&endDt=20180301&stnIds=108&schListCnt=1&pageIndex=1&apiKey={}".format(api_keys.ApiKeys('kma').get_api_key())
+l_url_key_params = ['dataCd', 'dateCd', 'startDt', 'endDt', 'stnIds', 'schListCnt', 'pageIndex', 'apiKey']
+dict_url_param = {
+    'type': 'json',
+    'dataCd': 'ASOS',
+    'dateCd': 'DAY',
+    'startDt': 20180301,
+    'endDt': 20180301,
+    'stnIds': 108,
+    'schListCnt': 1,
+    'pageIndex': 1,
+    'apiKey': api_keys.ApiKeys('kma').get_api_key()
+}
 
+
+url_kma = "http://data.kma.go.kr/apiData/getData?"\
+          "type={type}&dataCd={dataCd}&dateCd={dateCd}"\
+          "&startDt={startDt}&endDt={endDt}&stnIds={stnIds}"\
+          "&schListCnt={schListCnt}&pageIndex={pageIndex}&apiKey={apiKey}".format(**dict_url_param)
 
 context = ssl._create_unverified_context()
 print type(context)
@@ -49,7 +62,8 @@ def get_response():
 kma_data = get_response()
 dict_kma_info_data = get_info_dict(kma_data)
 
-
+print "======================================="
+print dict_kma_info_data
 print "======================================="
 print "데이터 출력 "
 dict_weather_data = {}
@@ -63,5 +77,6 @@ print "dictonary 데이터 출력"
 for key, value in dict_weather_data.iteritems():
     print "(key,value) = ({},{})".format(key, value)
 
-
-
+l_score = [100, 10, 100]
+l_best_score = [score for score in l_score if score > 90]
+print l_best_score
